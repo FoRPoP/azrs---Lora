@@ -1,90 +1,84 @@
 #include "CLora.h"
 //#include "variants.h"
 #include <assert.h>
-#include <QFile>
 #include <QDir>
+#include <QFile>
 #include <QTextStream>
-#include "define.h"
 #include <iostream>
-CLora::CLora()
-{
-}
+#include "define.h"
+CLora::CLora() {}
 
-CLora::~CLora()
-{
-}
+CLora::~CLora() {}
 
 void CLora::newGame()
 {
-    initVars();
+  initVars();
 
-    resetScore();
+  resetScore();
 
-    resetCardsOnTable();
-    resetCardsLeftInSuit();
-    resetCardsPlayed();
-    resetPlrCardsInSuit();
-    resetPlrHasCard();
+  resetCardsOnTable();
+  resetCardsLeftInSuit();
+  resetCardsPlayed();
+  resetPlrCardsInSuit();
+  resetPlrHasCard();
 
-    randomDeck();
-    userId = user->getUserId();
+  randomDeck();
+  userId = user->getUserId();
 
-    emit sigClearTable();
-    emit sigRefreshDeck(user, true);
+  emit sigClearTable();
+  emit sigRefreshDeck(user, true);
 }
 
 void CLora::initVars()
 {
-    for(int i=0;i<4;++i){
-        for(int j=0;j<8;++j){
-            cardsSelected[i][j] = false;
-        }
+  for ( int i = 0; i < 4; ++i )
+  {
+    for ( int j = 0; j < 8; ++j )
+    {
+      cardsSelected[i][j] = false;
     }
-
+  }
 }
 
 void CLora::resetScore()
 {
-    for (int i=0; i<4; i++) {
-        players[i]->resetPoints();
+  for ( int i = 0; i < 4; i++ )
+  {
+    players[i]->resetPoints();
 
-        emit sigScore(players[i]->getPoints(), i);
-    }
+    emit sigScore(players[i]->getPoints(), i);
+  }
 }
 
 
 void CLora::randomDeck()
 {
-
-    Deck* deck = new Deck();
-    deck->dealCards(players);
-    sortPlrCards();
-    delete deck;
+  Deck* deck = new Deck();
+  deck->dealCards(players);
+  sortPlrCards();
+  delete deck;
 }
 
 
-void CLora::sortPlrCards() {
-
-    for(Player* plyr:players){
-        plyr->sortCards();
-    }
-
+void CLora::sortPlrCards()
+{
+  for ( Player* plyr : players )
+  {
+    plyr->sortCards();
+  }
 }
 
 
 void CLora::advanceTurn()
 {
-    players.push_back(players.first());
+  players.push_back(players.first());
 
 
-    emit sigClearTable();
-
-
+  emit sigClearTable();
 }
 
 
-
-//int CLora::playCard(int idx)
+// int CLora::playCard(int idx)
 //{
 //  Card* card = players[userId]->getCardsInHand()[idx];
 
@@ -109,156 +103,162 @@ void CLora::advanceTurn()
 
 bool CLora::isItDraw()
 {
-    for(int i=0;i<4;++i){
-        for(int j=i+1; j<4; ++j){
-            if(players[i]->getPoints() == players[j]->getPoints())
-                return true;
-        }
+  for ( int i = 0; i < 4; ++i )
+  {
+    for ( int j = i + 1; j < 4; ++j )
+    {
+      if ( players[i]->getPoints() == players[j]->getPoints() )
+        return true;
     }
-    return false;
+  }
+  return false;
 }
 
 bool CLora::isCardSelectable(Card* card)
 {
-    if (players.first() != user)
-        return false;
+  if ( players.first() != user )
+    return false;
 
-    return (checkInvalidMove(user, card) == NOERROR);
+  return (checkInvalidMove(user, card) == NOERROR);
 }
 
 Card* CLora::getLowestSuit(Player* plr, Card::Suit suit)
 {
-    for(Card* card:plr->getCardsInHand()){
-        if(card->getCardSuit() == suit)
-            return card;
-    }
-    return nullptr;
+  for ( Card* card : plr->getCardsInHand() )
+  {
+    if ( card->getCardSuit() == suit )
+      return card;
+  }
+  return nullptr;
 }
 
 int CLora::getLowestSuitPos(Player* plr, Card::Suit suit)
 {
-    int i=0;
-    for(Card* card:plr->getCardsInHand()){
-        if(card->getCardSuit() == suit)
-            return i;
-        i++;
-    }
-    return -1;
+  int i = 0;
+  for ( Card* card : plr->getCardsInHand() )
+  {
+    if ( card->getCardSuit() == suit )
+      return i;
+    i++;
+  }
+  return -1;
 }
 
 int CLora::getHighestSuitPos(Player* plr, Card::Suit suit)
 {
-    int i=0;
-    bool found=false;
-    for(Card* card:plr->getCardsInHand()){
-        if(card->getCardSuit() == suit)
-            found = true;
-        else if(card->getCardSuit() != suit && !found){
-            return i;
-        }
-        ++i;
+  int i = 0;
+  bool found = false;
+  for ( Card* card : plr->getCardsInHand() )
+  {
+    if ( card->getCardSuit() == suit )
+      found = true;
+    else if ( card->getCardSuit() != suit && !found )
+    {
+      return i;
     }
-    return -1;
+    ++i;
+  }
+  return -1;
 }
 
 Card* CLora::getHighestSuit(Player* plr, Card::Suit suit)
 {
-    Card* c = nullptr;
-    for(Card* card:plr->getCardsInHand()){
-        if(card->getCardSuit() == suit){
-            c = card;
-        }
-
+  Card* c = nullptr;
+  for ( Card* card : plr->getCardsInHand() )
+  {
+    if ( card->getCardSuit() == suit )
+    {
+      c = card;
     }
-    return c;
+  }
+  return c;
 }
 
-int CLora::countMyCards(){
-    return user->getNumOfCards();
+int CLora::countMyCards()
+{
+  return user->getNumOfCards();
 }
 int CLora::countPlrCards(Player* plyr)
 {
-    return plyr->getNumOfCards();
+  return plyr->getNumOfCards();
 }
 
 int CLora::getCardPosition(Player* plr, Card* card)
 {
-    int i=0;
-    for(Card* c:plr->getCardsInHand()){
-        if(c == card){
-            return i;
-        }
-        ++i;
+  int i = 0;
+  for ( Card* c : plr->getCardsInHand() )
+  {
+    if ( c == card )
+    {
+      return i;
     }
-    return -1;
+    ++i;
+  }
+  return -1;
 }
-
-
 
 
 int CLora::getLowestScore()
 {
-    unsigned int score = static_cast<int>(INFINITY);
-    for(Player* plr : players){
-        if(plr->getPoints() < score)
-            score = plr->getPoints();
-    }
-    return score;
+  unsigned int score = static_cast<int>(INFINITY);
+  for ( Player* plr : players )
+  {
+    if ( plr->getPoints() < score )
+      score = plr->getPoints();
+  }
+  return score;
 }
 
 int CLora::getHighestScore()
 {
-    unsigned int score = 0;
-    for(Player* plr : players){
-        if(plr->getPoints() > score)
-            score = plr->getPoints();
-    }
-    return score;
+  unsigned int score = 0;
+  for ( Player* plr : players )
+  {
+    if ( plr->getPoints() > score )
+      score = plr->getPoints();
+  }
+  return score;
 }
-
 
 
 bool CLora::isItMyTurn()
 {
-    return players.front() == user;
+  return players.front() == user;
 }
 
 
 Card::Suit CLora::getCurrentSuit()
 {
-    return currentSuit;
+  return currentSuit;
 }
 
 int CLora::getMyScore()
 {
-    for(Player* plr:players){
-        if(plr == user)
-            return plr->getPoints();
-    }
+  for ( Player* plr : players )
+  {
+    if ( plr == user )
+      return plr->getPoints();
+  }
 }
 
 
-
-
-Player* CLora::whoAmI(){
-    return user;
+Player* CLora::whoAmI()
+{
+  return user;
 }
 
 Card* CLora::getCard(int plr, int idx)
 {
-    return players[plr]->getCardsInHand()[idx];
+  return players[plr]->getCardsInHand()[idx];
 }
 
 Card* CLora::getCard(Player* plr, int idx)
 {
-    return plr->getCardsInHand()[idx];
+  return plr->getCardsInHand()[idx];
 }
 
 
 Card* CLora::getCard(int idx)
 {
-    return user->getCardsInHand()[idx];
-
+  return user->getCardsInHand()[idx];
 }
-
-

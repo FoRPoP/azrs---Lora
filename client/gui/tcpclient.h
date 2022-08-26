@@ -1,58 +1,56 @@
 #ifndef TCPCLIENT_H
 #define TCPCLIENT_H
 
-#include <QWidget>
 #include <QAbstractSocket>
-#include <iostream>
 #include <QMessageBox>
+#include <QWidget>
 #include <QtNetwork>
+#include <iostream>
 
-#include "ui_tcpclient.h"
-#include "ui_mainwindow.h"
-#include "ui_mainwindow.h"
 #include "../Game.h"
-
-
+#include "ui_mainwindow.h"
+#include "ui_tcpclient.h"
 
 
 class QTcpSocket;
 
-namespace Ui {
+namespace Ui
+{
 class TcpClient;
 }
 
 class TcpClient : public QWidget
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    explicit TcpClient(QWidget *parent = 0);
-    ~TcpClient();
-public slots:
-    void sendMessage(QString);
+ public:
+  explicit TcpClient(QWidget* parent = 0);
+  ~TcpClient();
+ public slots:
+  void sendMessage(QString);
 
-private slots:
-    void readMessage();
-    void on_connect_clicked();
-    void connectedToServer();
-    void on_disconnect_clicked();
-    void disconnectedByServer();
+ private slots:
+  void readMessage();
+  void on_connect_clicked();
+  void connectedToServer();
+  void on_disconnect_clicked();
+  void disconnectedByServer();
 
-signals:
-    void connection(QString);
-    void start(QString);
-    void notReady();
-    void showFullMessage();
+ signals:
+  void connection(QString);
+  void start(QString);
+  void notReady();
+  void showFullMessage();
 
-private:
-    Ui::TcpClient *ui;
-    QTcpSocket *m_socket;
-    QString m_user;
-    QString m_receivedData;
-    QString m_clientNumber;
+ private:
+  Ui::TcpClient* ui;
+  QTcpSocket* m_socket;
+  QString m_user;
+  QString m_receivedData;
+  QString m_clientNumber;
 
-    void parseMessages(QString, QTcpSocket*);
-    void updateGui(QAbstractSocket::SocketState state);
+  void parseMessages(QString, QTcpSocket*);
+  void updateGui(QAbstractSocket::SocketState state);
 };
 
 #endif

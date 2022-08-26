@@ -5,19 +5,20 @@
 #include <QWidget>
 #include <Qt>
 
-class CLabel : public QLabel {
-    Q_OBJECT
+class CLabel : public QLabel
+{
+  Q_OBJECT
 
-public:
-    explicit CLabel(QWidget* parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
-    ~CLabel();
+ public:
+  explicit CLabel(QWidget* parent = Q_NULLPTR,
+                  Qt::WindowFlags f = Qt::WindowFlags());
+  ~CLabel();
 
-signals:
-    void clicked();
+ signals:
+  void clicked();
 
-protected:
-    void mousePressEvent(QMouseEvent* event);
-
+ protected:
+  void mousePressEvent(QMouseEvent* event);
 };
 
-#endif // CLABEL_H
+#endif  // CLABEL_H

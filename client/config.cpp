@@ -1,23 +1,21 @@
 #include "config.h"
 Config::Config()
 {
- initVars();
+  initVars();
 
- QFile file(QDir::homePath() + CONFIG_FILENAME);
+  QFile file(QDir::homePath() + CONFIG_FILENAME);
 
- if (!file.exists())
-   saveConfigFile();      // create the file by saving the default values.
- else
-   loadConfigFile();
+  if ( !file.exists() )
+    saveConfigFile();  // create the file by saving the default values.
+  else
+    loadConfigFile();
 }
 
-Config::~Config()
-{
-}
+Config::~Config() {}
 
 void Config::initVars()
 {
-//  autoCentering = true;
+  //  autoCentering = true;
   infoChannel = true;
 
   username = "";
@@ -27,71 +25,76 @@ void Config::initVars()
   language = LANG_ENGLISH;
 }
 
-int Config::loadConfigFile() {
+int Config::loadConfigFile()
+{
   QFile file(QDir::homePath() + CONFIG_FILENAME);
 
   int cpt = 0;
 
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+  if ( !file.open(QIODevice::ReadOnly | QIODevice::Text) )
+  {
     return ERROPENRO;
   }
 
-  while (!file.atEnd()) {
-      cpt++;
-      QString line = file.readLine();
-      QString param = line.section(" ", 0, 0);
-      QString value = line.section(" ", -1, -1).simplified();
+  while ( !file.atEnd() )
+  {
+    cpt++;
+    QString line = file.readLine();
+    QString param = line.section(" ", 0, 0);
+    QString value = line.section(" ", -1, -1).simplified();
 
-      if (param == "Language") {
-        if (value == "english")
-          language = LANG_ENGLISH;
+    if ( param == "Language" )
+    {
+      if ( value == "english" )
+        language = LANG_ENGLISH;
 
-        else
-        if(value == "serbian")
-            language = LANG_SERBIAN;
-        continue;
-      }
+      else if ( value == "serbian" )
+        language = LANG_SERBIAN;
+      continue;
+    }
 
 
+    if ( param == "Username" )
+    {
+      username = value;
+      continue;
+    }
 
-      if (param == "Username") {
-        username  = value;
-        continue;
-      }
+    if ( param == "Password" )
+    {
+      password = value;
+      continue;
+    }
 
-      if (param == "Password") {
-        password = value;
-        continue;
-      }
+    bool enable;
 
-      bool enable;
+    if ( value == "true" )
+      enable = true;
+    else
+      enable = false;
 
-      if (value == "true")
-        enable = true;
-      else
-        enable = false;
+    //      if (param == "Auto_Centering")
+    //        autoCentering = enable;
 
-//      if (param == "Auto_Centering")
-//        autoCentering = enable;
+    //      else
+    if ( param == "Info_Channel" )
+      infoChannel = enable;
+    else
 
-//      else
-      if (param == "Info_Channel")
-        infoChannel = enable;
-      else
-
-      if (param == "Warning")
-        warning = enable;
-      else {
-          // unknown param
-      }
-
+        if ( param == "Warning" )
+      warning = enable;
+    else
+    {
+      // unknown param
+    }
   }
   file.close();
 
   return FNOERR;
 }
 
-int Config::setLanguage(int lang) {
+int Config::setLanguage(int lang)
+{
   language = lang;
 
   return saveConfigFile();
@@ -99,10 +102,15 @@ int Config::setLanguage(int lang) {
 
 int Config::setConfigFile(int param, bool enable)
 {
-  switch (param) {
-//    case CONFIG_AUTO_CENTERING :          autoCentering = enable; break;
-    case CONFIG_INFO_CHANNEL :            infoChannel = enable; break;
-    case CONFIG_WARNING :                 warning = enable; break;
+  switch ( param )
+  {
+      //    case CONFIG_AUTO_CENTERING :          autoCentering = enable; break;
+    case CONFIG_INFO_CHANNEL:
+      infoChannel = enable;
+      break;
+    case CONFIG_WARNING:
+      warning = enable;
+      break;
   }
 
   return saveConfigFile();
@@ -112,25 +120,33 @@ int Config::saveConfigFile()
 {
   QFile file(QDir::homePath() + CONFIG_FILENAME);
 
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-     return ERROPENWO;
+  if ( !file.open(QIODevice::WriteOnly | QIODevice::Truncate |
+                  QIODevice::Text) )
+  {
+    return ERROPENWO;
   }
 
   QTextStream out(&file);
 
-  if (username.size() && password.size()) {
+  if ( username.size() && password.size() )
+  {
     out << "Username = " << username << '\n';
     out << "Password = " << password << '\n';
     out << "Warning = " << (warning ? "true" : "false") << '\n';
   }
 
-  switch (language) {
-    case LANG_ENGLISH: out << "Language = english" << '\n'; break;
-    case LANG_SERBIAN: out << "Language = serbian" << '\n'; break;
+  switch ( language )
+  {
+    case LANG_ENGLISH:
+      out << "Language = english" << '\n';
+      break;
+    case LANG_SERBIAN:
+      out << "Language = serbian" << '\n';
+      break;
   }
 
 
-//  out << "Auto_Centering = " << (autoCentering ? "true" : "false") << '\n';
+  //  out << "Auto_Centering = " << (autoCentering ? "true" : "false") << '\n';
   out << "Info_Channel = " << (infoChannel ? "true" : "false") << '\n';
 
   file.close();
@@ -145,12 +161,12 @@ void Config::setOnline(QString u, QString p)
   saveConfigFile();
 }
 
-QString &Config::Username()
+QString& Config::Username()
 {
   return username;
 }
 
-QString &Config::Password()
+QString& Config::Password()
 {
   return password;
 }
@@ -160,37 +176,41 @@ bool Config::Warning()
   return warning;
 }
 
-//bool Config::isAutoCentering() {
+// bool Config::isAutoCentering() {
 //  return autoCentering;
 //}
 
-void Config::addUsername(){
-    QFile file(QDir::homePath() + USERNAMES_FILENAME);
-    QTextStream out(&file);
-    out << username << '\n';
-    file.close();
+void Config::addUsername()
+{
+  QFile file(QDir::homePath() + USERNAMES_FILENAME);
+  QTextStream out(&file);
+  out << username << '\n';
+  file.close();
 }
 
-void Config::loadUsernames(){
-    QFile file(QDir::homePath() + USERNAMES_FILENAME);
+void Config::loadUsernames()
+{
+  QFile file(QDir::homePath() + USERNAMES_FILENAME);
 
 
-
-    while (!file.atEnd()) {
-        QString usrnm = file.readLine();
-        if(usernames.indexOf(usrnm) == -1)
-            usernames.push_back(usrnm);
-    }
+  while ( !file.atEnd() )
+  {
+    QString usrnm = file.readLine();
+    if ( usernames.indexOf(usrnm) == -1 )
+      usernames.push_back(usrnm);
+  }
 }
 
-QList<QString> Config::getUsernames(){
-    return usernames;
+QList<QString> Config::getUsernames()
+{
+  return usernames;
 }
 
-bool Config::isInfoChannel() {
+bool Config::isInfoChannel()
+{
   return infoChannel;
 }
-int Config::getLanguage() {
+int Config::getLanguage()
+{
   return language;
 }
-
