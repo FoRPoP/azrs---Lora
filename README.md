@@ -1,1 +1,1 @@
-Repozitorijum za projekat rad na projektu Lora za kurs Azrs
+Repozitorijum za rad na projektu Lora za kurs Azrs
