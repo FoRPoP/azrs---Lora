@@ -733,10 +733,6 @@ Player* Game::getPlayerAtPos(int i)
   return players[i];
 }
 
-void Game::shufflePlayers()
-{
-  std::random_shuffle(players.begin(), players.end());
-}
 bool Game::isItDraw()
 {
   for ( int i = 0; i < 4; ++i )

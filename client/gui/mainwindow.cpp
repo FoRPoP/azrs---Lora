@@ -276,17 +276,11 @@ void MainWindow::initializeGraphics()
 void MainWindow::gameOver()
 {
   // TODO
-  QString message1, message2;
+  QString message1;
 
   //  stats->increaseStats(0, STATS_GAME_FINISHED);
 
   clearDeck();
-
-  if ( !lora->isItDraw() )
-    message2 = tr("Won !");
-  else
-    message2 = tr("Draw !");
-
 
   lora->sortPlayersByPoints();
   //  stats->increaseStats(lora->  getPlayerAtPos(0)->getPlayerName(),

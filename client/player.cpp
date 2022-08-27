@@ -241,11 +241,9 @@ void Player::reset()
 
 bool Player::hasCard(Card* card)
 {
-  for ( Card* c : cardsInHand )
-  {
-    if ( c == card )
+  if(std::any_of(cardsInHand.begin(), cardsInHand.end(), [card](Card* c){return c == card;}))
       return true;
-  }
+
   return false;
 }
 
